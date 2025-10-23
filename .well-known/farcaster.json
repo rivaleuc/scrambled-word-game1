@@ -5,7 +5,7 @@
     "signature": ""
   },
   "baseBuilder": {
-    "allowedAddresses": [""]
+    "allowedAddresses": ["0x68c71247712E39925d31d82FdC02dfe0f8e24de7"]
   },
   "miniapp": {
     "version": "1",
@@ -14,7 +14,6 @@
     "iconUrl": "https://placehold.co/512x512/FF1493/FFFFFF?text=LOGO",
     "splashImageUrl": "https://placehold.co/1080x1920/FF1493/FFFFFF?text=SPLASH",
     "splashBackgroundColor": "#FF1493",
-    "webhookUrl": "",
     "subtitle": "Unscramble words against the clock.",
     "description": "A fun game to unscramble words against the clock.",
     "screenshotUrls": [
