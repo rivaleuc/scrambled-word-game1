@@ -1,0 +1,33 @@
+{
+  "accountAssociation": {
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "baseBuilder": {
+    "allowedAddresses": [""]
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Scrambled Word Quiz",
+    "homeUrl": "https://scrambled-word-game1.vercel.app/",
+    "iconUrl": "https://placehold.co/512x512/FF1493/FFFFFF?text=LOGO",
+    "splashImageUrl": "https://placehold.co/1080x1920/FF1493/FFFFFF?text=SPLASH",
+    "splashBackgroundColor": "#FF1493",
+    "webhookUrl": "",
+    "subtitle": "Unscramble words against the clock.",
+    "description": "A fun game to unscramble words against the clock.",
+    "screenshotUrls": [
+      "https://placehold.co/1080x1920/00FFFF/000000?text=Screenshot+1"
+    ],
+    "primaryCategory": "games",
+    "tags": ["game", "quiz", "word game", "baseapp"],
+    "heroImageUrl": "https://placehold.co/512x512/FF1493/FFFFFF?text=LOGO",
+    "tagline": "Play instantly",
+    "ogTitle": "Scrambled Word Quiz",
+    "ogDescription": "A fun game to unscramble words against the clock.",
+    "ogImageUrl": "https://placehold.co/512x512/FF1493/FFFFFF?text=LOGO",
+    "noindex": false
+  }
+}
+
