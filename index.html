@@ -12,10 +12,8 @@
     <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
     
-    <!-- Hada Babel (bach ykhdm JSX f l-browser) -->
-    <!-- Khllinah l-khr bach ylqa l-SDKs wajdin -->
-    
     <!-- ========= TBDIL L-JDID HNA (SDKs) ========= -->
+    <!-- Kanloadiw l-SDKs qbl Babel -->
     <!-- 1. Hada howa l-SDK dyal Base Mini-App (li f l-doc) -->
     <script src="https://unpkg.com/@base-sdk/mini-app/dist/umd/base-mini-app-sdk.js"></script>
     <!-- 2. Hada howa l-SDK dyal Farcaster (li kan naqs) -->
@@ -77,7 +75,6 @@
         );
 
         const wordBank = [
-          // ... (L-word bank kamla khllitha kima hiya) ...
           { word: 'ELEPHANT', hint: 'Large animal with a trunk' },
           { word: 'COMPUTER', hint: 'Electronic device for work' },
           { word: 'RAINBOW', hint: 'Colorful arc in the sky' },
@@ -118,7 +115,6 @@
           { word: 'KEYBOARD', hint: 'Device with letters for typing' },
           { word: 'MYSTERY', hint: 'Something hard to understand' },
           { word: 'STADIUM', hint: 'Large sports arena' },
-          // ========= TBDIL L-JDID HNA (Kan ghalat "word:g:") =========
           { word: 'PARACHUTE', hint: 'Slows your fall from the sky' },
           { word: 'PEACOCK', hint: 'Bird with colorful tail feathers' },
           { word: 'MAGICIAN', hint: 'Performer who does tricks' },
@@ -132,10 +128,8 @@
 
         const ROUND_LIMIT = 5;
 
-        // ========= TBDIL L-JDID HNA: Bdlt smiya l "App" =========
         // L-function dyal l-game
-        function App() { // Kan smito ScrambledWordQuiz
-          // Kanst3mlo React globalment mn "window.React"
+        function App() {
           const { useState, useEffect } = React;
 
           const [gameState, setGameState] = useState('home'); // home, playing, gameover
@@ -149,32 +143,60 @@
           const [timer, setTimer] = useState(20);
           const [round, setRound] = useState(0);
 
-          // ========= TBDIL L-JDID HNA (SDK Initialization) =========
+          // ========= TBDIL L-JDID HNA (SDK Initialization mdyona) =========
           useEffect(() => {
-            // Hada howa l-code dyal initialization dyal SDKs
-            // Ntsnaw 100ms 3ad nbdaw bach nضمنo l-game tl3 (bach ma tbqach l-page khawya)
-            setTimeout(() => {
-              // 1. N-call-iw Base SDK
-              if (window.BaseMiniApp) {
-                console.log('Base SDK ready.');
-                new window.BaseMiniApp().ready();
-              } else {
-                console.warn('Base SDK (BaseMiniApp) not found.');
-              }
+            // Hada howa l-code l-jdid bach n-check-iw l-SDKs
+            console.log("App mounted. Starting SDK check...");
 
-              // 2. N-call-iw Farcaster SDK (B l-tariqa l-sahih)
-              if (window.farcaster && window.farcaster.actions) {
-                console.log('Farcaster SDK ready.');
-                window.farcaster.actions.ready(); // Hada howa l-code li bghiti
-              } else {
-                console.warn('Farcaster SDK (farcaster.actions) not found.');
-              }
-            }, 100);
+            let fcReady = false;
+            let baseReady = false;
+            let attempts = 0;
+            const maxAttempts = 50; // (5 seconds)
+
+            const sdkCheckInterval = setInterval(() => {
+                attempts++;
+
+                // 1. N-call-iw Base SDK (ila ma kan khdam)
+                if (!baseReady && window.BaseMiniApp) {
+                    try {
+                        console.log('Base SDK found. Calling ready().');
+                        new window.BaseMiniApp().ready();
+                        baseReady = true;
+                    } catch (e) {
+                        console.error('Base SDK ready() call failed:', e);
+                    }
+                }
+
+                // 2. N-call-iw Farcaster SDK (ila ma kan khdam)
+                if (!fcReady && window.farcaster && window.farcaster.actions) {
+                    try {
+                        console.log('Farcaster SDK found. Calling actions.ready().');
+                        window.farcaster.actions.ready(); // Hada howa l-code li bghiti
+                        fcReady = true;
+                    } catch (e) {
+                        console.error('Farcaster SDK actions.ready() call failed:', e);
+                    }
+                }
+
+                // 3. Nwqfo l-interval ila khdmo b joj, awla ftnah l-waqt
+                if ((fcReady && baseReady) || attempts >= maxAttempts) {
+                    clearInterval(sdkCheckInterval);
+                    if (attempts >= maxAttempts) {
+                        console.warn('SDK check timed out. One or both SDKs might not have loaded.');
+                    } else {
+                        console.log('Both SDKs initialized successfully.');
+                    }
+                }
+            }, 100); // Kan check-iw kol 100ms
+
+            // Cleanup function
+            return () => {
+                clearInterval(sdkCheckInterval);
+            };
           }, []); // Ghadi tkhdm mra w7da mli l-app ybd
 
           // Function dyal tkhrbiq l-klma
           const scrambleWord = (word) => {
-            // ... (L-code dyal tkhrbiq khllito kima howa) ...
             const firstLetter = word[0];
             const remainingLetters = word.slice(1).split('');
             
@@ -189,7 +211,6 @@
 
           // Function bach tjib klma jdida
           const loadNewWord = () => {
-            // ... (L-logic dyal loadNewWord khllito kima howa) ...
             const nextRound = round + 1;
             
             if (nextRound > ROUND_LIMIT) {
@@ -223,7 +244,6 @@
 
           // Timer logic
           useEffect(() => {
-            // ... (L-logic dyal l-timer khllito kima howa) ...
             if (gameState !== 'playing' || timer <= 0) {
               return;
             }
@@ -237,7 +257,6 @@
 
           // Check ila sala l-waqt
           useEffect(() => {
-            // ... (L-logic dyal "Time's up" khllito kima howa) ...
             if (timer === 0 && gameState === 'playing') {
               setFeedback(`Time's up! The word was: ${currentWord.word}`);
               setAttempts(attempts + 1);
@@ -249,7 +268,6 @@
 
           // Function dyal "Submit"
           const handleSubmit = () => {
-            // ... (L-logic dyal Submit khllito kima howa) ...
             if (timer === 0) return; 
 
             if (userGuess.toUpperCase() === currentWord.word) {
@@ -266,7 +284,6 @@
 
           // Function dyal "Skip"
           const handleSkip = () => {
-            // ... (L-logic dyal Skip khllito kima howa) ...
             if (timer === 0) return;
 
             setFeedback(`The word was: ${currentWord.word}`);
@@ -285,7 +302,6 @@
 
           // Function bach t3awd tl3b
           const handleRestartGame = () => {
-            // ... (L-logic dyal Restart khllito kima howa) ...
             setScore(0);
             setAttempts(0);
             setUsedWords([]);
@@ -295,7 +311,6 @@
 
           // Home Page
           if (gameState === 'home') {
-            // ... (L-code dyal l-Home Page khllito kima howa) ...
             return (
               <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white">
                 <div className="text-center">
@@ -320,7 +335,6 @@
 
           // Game Over Page
           if (gameState === 'gameover') {
-            // ... (L-code dyal l-Game Over khllito kima howa) ...
             return (
               <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white">
                 <div className="text-center bg-blue-700 p-10 rounded-2xl border-4 border-cyan-400 shadow-2xl">
@@ -341,7 +355,6 @@
           if (!currentWord) return <div className="min-h-screen bg-blue-900 flex items-center justify-center text-white text-2xl">Loading...</div>;
 
           return (
-            // ... (L-code dyal l-Game khllito kima howa) ...
             <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4">
               <div className="w-full max-w-4xl">
                 {/* Header */}
