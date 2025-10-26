@@ -8,7 +8,7 @@
     <!-- 1. Tailwind (Design) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Farcaster Embed Metadata -->
+    <!-- 2. Farcaster Embed Metadata & Open Graph -->
     <meta name="fc:miniapp" content='{
       "version":"next",
       "imageUrl":"https://scrambled-word-game1.vercel.app/embed-image.png",
@@ -19,7 +19,11 @@
           "name":"Scrambled Word Quiz",
           "url":"https://scrambled-word-game1.vercel.app/"
           }
-      }
+      },
+      "castShareUrl": "https://scrambled-word-game1.vercel.app/",
+      "ogTitle": "Scrambled Word Quiz", 
+      "ogDescription": "Unscramble words and challenge yourself!", 
+      "ogImageUrl": "https://scrambled-word-game1.vercel.app/embed-image.png" 
     }' />
 
     <!-- 3. React -->
@@ -33,7 +37,7 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Style for image loading error (Still useful if needed elsewhere) */
+        /* Style for image loading error */
         .logo-error {
             display: inline-block; 
             width: 128px; 
@@ -162,8 +166,7 @@
         ];
 
         const ROUND_LIMIT = 5;
-        const GAME_FEE_ETH = '0.00001';
-        // HNA KAN L-GHALAT (7ydt 0x zayda)
+        const GAME_FEE_ETH = '0.0001';
         const DEVELOPER_WALLET = '0x68c71247712E39925d31d82FdC02dfe0f8e24de7';
 
 
@@ -185,12 +188,10 @@
           const [fid, setFid] = useState(null); 
           const [userAddress, setUserAddress] = useState(null);
           
-          // 7YDNA L-STATE DYAL AI HINT
-          const [funFact, setFunFact] = useState('');
-          const [funFactLoading, setFunFactLoading] = useState(false);
+          // HNA 7YDNA L-STATES DYAL FUN FACT
 
 
-          // ========= 5. L-FUNCTIONS DYAL L-WALLET (B TARIQA DYAL XO PRO) =========
+          // ========= 5. L-FUNCTIONS DYAL L-WALLET =========
 
           const handleConnectWallet = async () => {
             setIsProcessing(true);
@@ -205,7 +206,6 @@
               setStatusMessage('2/3: Requesting account access...');
               console.log("Provider found. Requesting accounts...");
 
-              // HNA KAN L-BDIL: KAN-TLBO L-ACCOUNT MN L-PROVIDER NICHAN
               const accounts = await provider.request({ method: 'eth_requestAccounts' });
               
               if (accounts && accounts.length > 0) {
@@ -213,11 +213,9 @@
                   setUserAddress(connectedAddress);
                   console.log("Account connected:", connectedAddress);
 
-                  // (Optional) N7awlo njibo l-FID ila bghina n-byynoh
                   setStatusMessage('3/3: Getting user data...');
                   try {
                       console.log("Attempting to get user data from Farcaster SDK...");
-                      // HNA BDILNA L-CHECK
                       if (sdk && typeof sdk.getUserData === 'function') {
                           const userData = await sdk.getUserData();
                           if (userData && userData.fid) {
@@ -279,13 +277,11 @@
                   from: userAddress, 
                   to: DEVELOPER_WALLET, 
                   value: parseEther(GAME_FEE_ETH), 
-                  // chainId: "0x2105" // Base Mainnet 
                 }]
               });
               
               setStatusMessage('✅ Payment complete! Starting game...');
               console.log("Transaction Hash:", hash);
-              // 7YDNA RESET DYAL AI HINTS
               
               setTimeout(() => {
                 setGameState('playing');
@@ -315,8 +311,7 @@
           };
 
           const loadNewWord = () => {
-            // 7YDNA RESET DYAL AI HINT
-            setFunFact(''); 
+             // HNA 7YDNA L-CODE DYAL FUN FACT
             const nextRound = round + 1;
             if (nextRound > ROUND_LIMIT) {
               setGameState('gameover');
@@ -363,70 +358,17 @@
             }
           }, [timer, gameState]);
 
-          // 7YDNA FUNCTION DYAL callGemini W fetchAiHint
-
-          const callGemini = async (prompt) => { // KHLLINA HAD FUNCTION 3LA WDD FUN FACT
-              const apiKey = ""; 
-              const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-              const payload = { contents: [{ parts: [{ text: prompt }] }] };
-              let attempt = 0;
-              const maxAttempts = 5;
-              const baseDelay = 1000; 
-
-              while (attempt < maxAttempts) {
-                  try {
-                      const response = await fetch(apiUrl, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify(payload)
-                      });
-
-                      if (!response.ok) {
-                          if (response.status === 429 || response.status >= 500) {
-                              throw new Error(`API Error: ${response.status}`);
-                          } else {
-                              const errorData = await response.json();
-                              console.error("Gemini API client error:", errorData);
-                              return `Error: ${errorData?.error?.message || 'Failed to get data'}`;
-                          }
-                      }
-
-                      const result = await response.json();
-                      const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-                      return text || 'Could not get a response.';
-
-                  } catch (error) {
-                      attempt++;
-                      if (attempt >= maxAttempts) {
-                          console.error("Gemini API call failed after multiple retries:", error);
-                          return `Error: Failed to connect after ${maxAttempts} attempts.`;
-                      }
-                      const delay = baseDelay * Math.pow(2, attempt -1) + Math.random() * 1000;
-                      await new Promise(resolve => setTimeout(resolve, delay));
-                  }
-              }
-              return 'Error: Exceeded maximum retry attempts.'; 
-          };
-          
-          const fetchFunFact = async (word) => {
-              if (!word) return;
-              setFunFactLoading(true);
-              setFunFact('');
-              const prompt = `Give me one interesting and very short fun fact (max 1 sentence) about ${word}.`;
-              const fact = await callGemini(prompt);
-              setFunFact(fact);
-              setFunFactLoading(false);
-          };
+           // HNA 7YDNA L-FUNCTION DYAL fetchFunFact W callGemini
 
           const handleSubmit = () => {
             if (timer === 0 || !currentWord) return;
             if (userGuess.toUpperCase() === currentWord.word) {
               setScore(score + 100);
               setFeedback('🎉 Correct! Well done!');
-              fetchFunFact(currentWord.word); 
+              // HNA 7YDNA L-3AYTA L-fetchFunFact
               setTimeout(() => {
                 loadNewWord();
-              }, 2500); 
+              }, 1500); // RDDNAHA 1500ms 7IT MA KAYNCH FUN FACT
             } else {
               setFeedback('❌ Try again!');
             }
@@ -457,8 +399,7 @@
             setUserAddress(null); 
             setGameState('home');
             setStatusMessage('');
-            // 7YDNA RESET DYAL AI HINTS
-            setFunFact('');
+            // HNA 7YDNA L-RESET DYAL FUN FACT
           };
 
           // ========= 7. L-INTERFACE =========
@@ -499,7 +440,6 @@
                   createElement('p', null, '🎮 Unscramble words to score points'),
                   createElement('p', null, '⏱️ 20 seconds per word'),
                   createElement('p', null, '🏆 100 points per correct answer')
-                  // 7YDNA L-JUMLA DYAL AI HINTS MN HNA HTA
                 ),
                 createElement('div', { className: "mt-12 text-center text-lg font-bold text-cyan-200 opacity-80" }, 
                    "Powered by Rivale"
@@ -557,14 +497,11 @@
               
               createElement('div', { className: "bg-gradient-to-b from-blue-700 to-blue-800 rounded-3xl p-6 md:p-8 border-8 border-cyan-400 shadow-2xl" },
                 
-                // 7YDNA L-BUTTON DYAL AI HINT MN HNA
                 createElement('div', { className: "text-center mb-4 relative" }, 
                     createElement('div', { className: "inline-block bg-pink-500 px-4 py-2 md:px-6 md:py-3 rounded-full border-4 border-white mb-2" },
                       createElement('div', { className: "text-white font-bold text-base md:text-lg" }, `💡 ${currentWord.hint}`)
                     )
-                    // HNA KAN L-BUTTON
                 ),
-                 // 7YDNA L-BLASSA DYAL AFFICHAGE DYAL AI HINT MN HNA
                  createElement('div', { className: "flex justify-center gap-1 md:gap-2 mb-6 flex-wrap" },
                   ...scrambled.split('').map((letter, i) =>
                     createElement('div', {
@@ -603,6 +540,7 @@
                   }, 'SKIP')
                 ),
                 
+                // HNA 7YDNA L-CODE DYAL FUN FACT
                 feedback && createElement('div', {
                   className: `mt-6 p-4 rounded-xl text-center font-black text-lg md:text-xl border-4 border-white shadow-lg ${
                     feedback.includes('Correct') 
@@ -612,17 +550,16 @@
                       : 'bg-yellow-400 text-blue-900'
                   }`
                 }, 
-                  feedback,
-                  feedback.includes('Correct') && funFact && !funFactLoading && createElement('div', { className: "mt-2 text-sm font-normal text-green-100"}, `🤓 Fun Fact: ${funFact}`),
-                  feedback.includes('Correct') && funFactLoading && createElement('div', { className: "mt-2 text-sm font-normal text-green-100"}, `🤓 Getting fun fact...`)
+                  feedback 
+                  // HNA 7YDNA L-AFFICHAGE DYAL FUN FACT
                 )
               )
             )
           );
         }
 
-        // ========= 9. Render l-App =========
-        const root = window.ReactDOM.createRoot(document.getElementById('root'));
+        // ========= 8. Render l-App =========
+        const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(createElement(App));
 
     </script>
