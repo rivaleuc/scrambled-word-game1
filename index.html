@@ -5,24 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scrambled Word Quiz</title>
     
-    <!-- Hada dyal Tailwind (Design) -->
+    <!-- 1. Hada dyal Tailwind (Design) - Kan khliwh -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Hada dyal React -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    
-    <!-- ========= TBDIL L-JDID HNA (SDKs) ========= -->
-    <!-- Kanloadiw l-SDKs qbl Babel -->
-    <!-- 1. Hada howa l-SDK dyal Base Mini-App (li f l-doc) -->
-    <script src="https://unpkg.com/@base-sdk/mini-app/dist/umd/base-mini-app-sdk.js"></script>
-    <!-- 2. Hada howa l-SDK dyal Farcaster (li kan naqs) -->
-    <script src="https://farcaster.dev/v/v1.js"></script>
-
-    <!-- Hada Babel (bach ykhdm JSX f l-browser) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- ========= Farcaster Embed (Hada rah kan 3ndk) ========= -->
+    <!-- 2. Hada dyal Farcaster Embed (Kan khliwh) -->
     <meta name="fc:miniapp" content='{
       "version":"next",
       "imageUrl":"https://<YOUR_VERCEL_APP_URL>/embed-image.png",
@@ -36,22 +22,49 @@
       }
     }' />
     
+    <!-- 3. Hada dyal l-Font (Kan khliwh) -->
     <style>
-        /* Font zwina */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
         }
     </style>
+    
+    <!-- (Saf, 7ydna kolchi l-scripts l-qdima dyal React, Babel, w SDKs) -->
 </head>
 <body class="bg-blue-900">
     <!-- Hna fin ghadi yban l-game -->
     <div id="root"></div>
 
     <!-- Hna kangolo l React ykhdm l-game dyalna -->
+    <!-- Hada howa l-file l-jdid w l-mohim -->
+    <script type="module">
+        // ========= 1. L-IMPORTS L-JDAD (b7al l-example dyal XO) =========
+        
+        // Hada l-import l-jdid dyal Farcaster SDK
+        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+        
+        // Hada l-import l-jdid dyal React (kaykhdm JSX bla Babel)
+        import React, { useState, useEffect } from 'https://esm.sh/react@18?jsx-runtime=automatic';
+        import ReactDOM from 'https://esm.sh/react-dom@18/client';
+        
+        // Hada l-import l-jdid dyal Viem (dyal l-flos)
+        import { createWalletClient, http, parseEther } from 'https://esm.sh/viem';
+        import { base } from 'https://esm.sh/viem/chains';
+        
+        // (Hani 7ydt l-import dyal BaseMiniApp li kan kaydir l-error)
 
-    <script type="text/babel">
-        // ========= Hada howa l-icon dyal Trophy (mn b3d ma 7ydna Lucide) =========
+
+        // ========= 2. L-INITIALIZATION (L-MOCHIL L-KBIR) =========
+        // Hani 3ytna liha f l-wl kima f l-example!
+        console.log("Calling Farcaster sdk.actions.ready() immediately...");
+        sdk.actions.ready();
+        
+        // (Hani 7ydt l-call dyal Base SDK li kan kaydir l-error)
+
+        // ========= 3. L-CODE DYAL L-GAME DYALNA (kima kan) =========
+        
+        // Hada l-icon dyal Trophy (mn b3d ma 7ydna Lucide)
         const Trophy = ({ className }) => (
           <svg 
             xmlns="http://www.w3.org/2000/svg" 
@@ -130,8 +143,6 @@
 
         // L-function dyal l-game
         function App() {
-          const { useState, useEffect } = React;
-
           const [gameState, setGameState] = useState('home'); // home, playing, gameover
           const [currentWord, setCurrentWord] = useState(null);
           const [scrambled, setScrambled] = useState('');
@@ -142,59 +153,78 @@
           const [usedWords, setUsedWords] = useState([]);
           const [timer, setTimer] = useState(20);
           const [round, setRound] = useState(0);
+          
+          // States dyal l-Wallet (kima kano)
+          const [fid, setFid] = useState(null);
+          const [userAddress, setUserAddress] = useState(null);
+          const [statusMessage, setStatusMessage] = useState('');
+          const [isProcessing, setIsProcessing] = useState(false);
+          
+          // HADA HOWA L-WALLET DYALK (BDLO B L-ADRESSE DYALK)
+          const [developerWallet, setDeveloperWallet] = useState('0x...YOUR_WALLET_ADDRESS_HERE...');
 
-          // ========= TBDIL L-JDID HNA (SDK Initialization mdyona) =========
-          useEffect(() => {
-            // Hada howa l-code l-jdid bach n-check-iw l-SDKs
-            console.log("App mounted. Starting SDK check...");
+          
+          // Function dyal Connect Wallet (kima kant)
+          const handleConnectWallet = async () => {
+            setIsProcessing(true);
+            setStatusMessage('1/2: Connecting to Farcaster...');
+            try {
+              // Nst3mlo SDK l-jdid
+              const { fid, address } = await sdk.wallet.connect(); 
+              if (fid) {
+                setFid(fid);
+                setUserAddress(address);
+                setStatusMessage(`✅ Connected! FID: ${fid}`);
+              } else {
+                setStatusMessage('❌ Connection failed. Please try again.');
+              }
+            } catch (e) {
+              console.error(e);
+              setStatusMessage(`❌ Error: ${e.message}`);
+            }
+            setIsProcessing(false);
+          };
 
-            let fcReady = false;
-            let baseReady = false;
-            let attempts = 0;
-            const maxAttempts = 50; // (5 seconds)
+          // Function dyal Payment (kima kant)
+          const handleStartGame = async () => {
+            if (!userAddress) {
+              setStatusMessage('Please connect your wallet first.');
+              return;
+            }
+            
+            setIsProcessing(true);
+            setStatusMessage('1/3: Preparing transaction...');
 
-            const sdkCheckInterval = setInterval(() => {
-                attempts++;
+            try {
+              // Nst3mlo l-SDK l-jdid dyal Viem
+              const client = createWalletClient({
+                  account: userAddress,
+                  chain: base, 
+                  transport: http() 
+              });
+              
+              setStatusMessage('2/3: Please approve the 0.0001 ETH payment in your wallet...');
+              
+              const hash = await client.sendTransaction({
+                  to: developerWallet,
+                  value: parseEther('0.0001')
+              });
+              
+              setStatusMessage('✅ Payment complete! Starting game...');
+              
+              setTimeout(() => {
+                setGameState('playing');
+                setIsProcessing(false);
+                setStatusMessage('');
+              }, 1500);
 
-                // 1. N-call-iw Base SDK (ila ma kan khdam)
-                if (!baseReady && window.BaseMiniApp) {
-                    try {
-                        console.log('Base SDK found. Calling ready().');
-                        new window.BaseMiniApp().ready();
-                        baseReady = true;
-                    } catch (e) {
-                        console.error('Base SDK ready() call failed:', e);
-                    }
-                }
-
-                // 2. N-call-iw Farcaster SDK (ila ma kan khdam)
-                if (!fcReady && window.farcaster && window.farcaster.actions) {
-                    try {
-                        console.log('Farcaster SDK found. Calling actions.ready().');
-                        window.farcaster.actions.ready(); // Hada howa l-code li bghiti
-                        fcReady = true;
-                    } catch (e) {
-                        console.error('Farcaster SDK actions.ready() call failed:', e);
-                    }
-                }
-
-                // 3. Nwqfo l-interval ila khdmo b joj, awla ftnah l-waqt
-                if ((fcReady && baseReady) || attempts >= maxAttempts) {
-                    clearInterval(sdkCheckInterval);
-                    if (attempts >= maxAttempts) {
-                        console.warn('SDK check timed out. One or both SDKs might not have loaded.');
-                    } else {
-                        console.log('Both SDKs initialized successfully.');
-                    }
-                }
-            }, 100); // Kan check-iw kol 100ms
-
-            // Cleanup function
-            return () => {
-                clearInterval(sdkCheckInterval);
-            };
-          }, []); // Ghadi tkhdm mra w7da mli l-app ybd
-
+            } catch (e) {
+              console.error(e);
+              setStatusMessage(`❌ Payment failed: ${e.message.split('.')[0]}.`);
+              setIsProcessing(false);
+            }
+          };
+          
           // Function dyal tkhrbiq l-klma
           const scrambleWord = (word) => {
             const firstLetter = word[0];
@@ -306,14 +336,16 @@
             setAttempts(0);
             setUsedWords([]);
             setRound(0);
-            setGameState('playing');
+            setFid(null); // Kanrj3o l Home Page b l-sahh
+            setUserAddress(null);
+            setGameState('home');
           };
 
           // Home Page
           if (gameState === 'home') {
             return (
               <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white">
-                <div className="text-center">
+                <div className="text-center w-full max-w-lg">
                   <h1 className="text-6xl font-black mb-4" style={{
                     textShadow: '4px 4px 0px rgba(0,0,0,0.3)',
                     WebkitTextStroke: '3px #FF1493'
@@ -321,13 +353,33 @@
                     GUESS
                     <span className="ml-3" style={{color: '#00FFFF'}}>THE WORD!</span>
                   </h1>
-                  <h2 className="text-2xl text-cyan-300 mb-12">Unscramble the word before the time runs out!</h2>
-                  <button
-                    onClick={() => setGameState('playing')}
-                    className="bg-pink-500 text-white px-12 py-6 rounded-xl font-black text-3xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105"
-                  >
-                    START THE GAME
-                  </button>
+                  <h2 className="text-2xl text-cyan-300 mb-12">Connect your wallet & pay 0.0001 ETH (Base) to play 5 rounds.</h2>
+                  
+                  {/* Buttons dyal l-Wallet */}
+                  <div className="flex flex-col gap-4 w-full">
+                    <button
+                      onClick={handleConnectWallet}
+                      disabled={isProcessing || fid}
+                      className="bg-purple-600 text-white px-10 py-5 rounded-xl font-black text-2xl border-4 border-white shadow-lg hover:bg-purple-700 transition transform hover:scale-105 disabled:opacity-50"
+                    >
+                      {fid ? `✅ Wallet Connected (FID: ${fid})` : '1. Connect Farcaster Wallet'}
+                    </button>
+
+                    <button
+                      onClick={handleStartGame}
+                      disabled={!fid || isProcessing}
+                      className="bg-pink-500 text-white px-10 py-5 rounded-xl font-black text-2xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105 disabled:opacity-50"
+                    >
+                      {isProcessing ? statusMessage : '2. Start Game (Pay 0.0001 ETH)'}
+                    </button>
+                  </div>
+
+                  {/* Status Message */}
+                  {statusMessage && !isProcessing && (
+                    <div className={`mt-4 p-3 rounded-lg font-bold ${statusMessage.includes('Error') || statusMessage.includes('failed') ? 'bg-red-500/80' : 'bg-green-500/80'}`}>
+                      {statusMessage}
+                    </div>
+                  )}
                 </div>
               </div>
             );
@@ -344,7 +396,7 @@
                     onClick={handleRestartGame}
                     className="bg-pink-500 text-white px-12 py-6 rounded-xl font-black text-3xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105"
                   >
-                    START GAME AGAIN
+                    Play Again (Pay Fee)
                   </button>
                 </div>
               </div>
@@ -467,13 +519,14 @@
           );
         }
 
-        // ========= Hna kangolo l React ykhdm l-game dyalna =========
+        // ========= 4. Hna kangolo l React ykhdm l-game dyalna =========
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(
-            <App /> /* // Hani 7ydt <React.StrictMode> mn hna b l-sahh */
+            <App /> /* Hna 7ydna StrictMode l-qdima */
         );
     </script>
 
 </body>
 </html>
+
 
