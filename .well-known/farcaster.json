@@ -13,7 +13,7 @@
     "version": "1",
     "name": "Scrambled Word Quiz",
     "homeUrl": "https://scrambled-word-game1.vercel.app/",
-    "iconUrl": "https://placehold.co/512x512/FF1493/FFFFFF?text=LOGO",
+    "iconUrl": "https://main--wordscramblegame1.netlify.app/assets/logo.png",
     "splashImageUrl": "https://placehold.co/1080x1920/FF1493/FFFFFF?text=SPLASH",
     "splashBackgroundColor": "#FF1493",
     "subtitle": "Scrambled Word Quiz",
