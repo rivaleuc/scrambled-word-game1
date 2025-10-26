@@ -8,10 +8,10 @@
     <!-- 1. Tailwind (Design) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Farcaster Embed Metadata (kima bghiti) -->
+    <!-- 2. Farcaster Embed Metadata -->
     <meta name="fc:miniapp" content='{
       "version":"next",
-      "imageUrl":"https://<YOUR_VERCEL_APP_URL>/embed-image.png",
+      "imageUrl":"https://scrambled-word-game1.vercel.app/embed-image.png",
       "button":{
           "title":"Play Scrambled Word Quiz",
           "action":{
@@ -22,11 +22,11 @@
       }
     }' />
 
-    <!-- 3. React (kima drti) -->
+    <!-- 3. React -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 
-    <!-- 4. L-SDKs 7ydnahom mn hna (ghadi n-importiwhom f l-module) -->
+    <!-- 4. Farcaster SDK (Loaded in module below) -->
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
@@ -38,30 +38,22 @@
 <body class="bg-blue-900">
     <div id="root"></div>
 
-    <!-- HNA L-BDIL L-KBIR: SCRIPT TYPE="MODULE" -->
     <script type="module">
         
         // ========= 1. Import l-SDK w n-call-iw Ready() =========
-        
-        // Import l-SDK dyal Farcaster (kima f l-example dyal XO Pro)
         import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
-
-        // L-7L L-NOHA'I: N-call-iw ready() f l-wl qbl kolchi
         sdk.actions.ready();
         console.log("Farcaster SDK ready() called immediately.");
 
         // ========= 2. Setup dyal React w l-Helpers =========
-        
         const { useState, useEffect, createElement } = React;
         
-        // Helper function (mn l-example dyal XO Pro) bach n7wlo l-ETH l-Wei
         function parseEther(x){ 
           const [w,f=""] = String(x).split('.'); 
           const frac=(f+'0'.repeat(18)).slice(0,18); 
           return '0x'+(BigInt(w)*10n**18n + BigInt(frac)).toString(16); 
         }
         
-        // Helper function (mn l-example dyal XO Pro) bach njibo l-provider
         async function getProvider(){ 
           try{ 
             const p = await sdk.wallet.getEthereumProvider(); 
@@ -69,13 +61,12 @@
           } catch(e) {
             console.warn("Error getting Farcaster provider", e);
           } 
-          // Fallback l-window.ethereum (ila l-user f browser 3adi)
           return window.ethereum ?? null; 
         }
 
-        // ========= 3. Components (kima kano) =========
-
+        // ========= 3. Components =========
         const Trophy = ({ className }) => {
+          // ... (Trophy SVG code kima kan) ...
           return createElement('svg', {
             xmlns: "http://www.w3.org/2000/svg",
             width: "24",
@@ -98,7 +89,7 @@
         };
 
         const wordBank = [
-          // (L-lista dyal l-klmat kima kant)
+          // ... (L-lista dyal l-klmat kima kant) ...
           { word: 'ELEPHANT', hint: 'Large animal with a trunk' },
           { word: 'COMPUTER', hint: 'Electronic device for work' },
           { word: 'RAINBOW', hint: 'Colorful arc in the sky' },
@@ -152,13 +143,9 @@
 
         const ROUND_LIMIT = 5;
         const GAME_FEE_ETH = '0.0001';
-        
-        // HANI SL7T L-GHALAT (7ydt 0x zayda)
         const DEVELOPER_WALLET = '0x68c71247712E39925d31d82FdC02dfe0f8e24de7';
 
-
-        // ========= 4. L-APP L-RA'ISSI (b l-logic l-7qiqi) =========
-
+        // ========= 4. L-APP L-RA'ISSI =========
         function App() {
           const [gameState, setGameState] = useState('home');
           const [currentWord, setCurrentWord] = useState(null);
@@ -176,23 +163,24 @@
           const [fid, setFid] = useState(null); 
           const [userAddress, setUserAddress] = useState(null);
 
+          // ... (L-functions dyal l-wallet w l-game kima kano) ...
           
-          // ========= 5. 7ydna L-7L L-QDIM DYAL "Ready not called" =========
-          // (Dak l-useEffect l-kbir li fih setInterval 7ydnah)
-          
-
-          // ========= 6. L-FUNCTIONS L-JDAD DYAL L-WALLET (Bdlna Viem) =========
-
           const handleConnectWallet = async () => {
             setIsProcessing(true);
             setStatusMessage('1/2: Connecting to Farcaster...');
             
+            // Check if connect function exists
+             if (!sdk || !sdk.wallet || typeof sdk.wallet.connect !== 'function') {
+                setStatusMessage('❌ Error: Wallet connect function not available. Please ensure you are in a Farcaster client.');
+                setIsProcessing(false);
+                return;
+            }
+
             try {
-              // Nst3mlo SDK (li importina lfoq)
               const { fid: userFid, address } = await sdk.wallet.connect(); 
               if (userFid) {
                 setFid(userFid);
-                setUserAddress(address); // L-adresse l-7qiqia
+                setUserAddress(address); 
                 setStatusMessage(`✅ Connected! FID: ${userFid}`);
               } else {
                 setStatusMessage('❌ Connection failed. Please try again.');
@@ -204,7 +192,6 @@
             setIsProcessing(false);
           };
 
-          // Hada l-code l-jdid dyal Payment (bla Viem, kima f XO Pro)
           const handleStartGame = async () => {
             if (!userAddress) {
               setStatusMessage('Please connect your wallet first.');
@@ -227,14 +214,12 @@
               }
               setStatusMessage('2/3: Please approve the payment in your wallet...');
 
-              // Nst3mlo l-provider l-7qiqi (kima f XO Pro)
               const hash = await provider.request({
                 method: 'eth_sendTransaction',
                 params: [{
-                  from: userAddress, // L-adresse li jbna mn connect()
-                  to: DEVELOPLER_WALLET, // HNA KAN L-GHALAT (Typo)
-                  value: parseEther(GAME_FEE_ETH), // Nst3mlo l-helper
-                  // chainId: "0x2105" // Base Mainnet (Momkin nzido hada l-ta'kid)
+                  from: userAddress, 
+                  to: DEVELOPER_WALLET, 
+                  value: parseEther(GAME_FEE_ETH), 
                 }]
               });
               
@@ -253,9 +238,6 @@
               setIsProcessing(false);
             }
           };
-          
-          
-          // ========= 7. L-LOGIC DYAL L-GAME (kima kan) =========
           
           const scrambleWord = (word) => {
             const firstLetter = word[0];
@@ -355,8 +337,8 @@
             setStatusMessage('');
           };
 
-          // ========= 8. L-INTERFACE (b `createElement` bdl `h`) =========
 
+          // ========= 5. L-INTERFACE =========
           if (gameState === 'home') {
             return createElement('div', { className: "min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white" },
               createElement('div', { className: "text-center w-full max-w-lg" },
@@ -364,8 +346,9 @@
                   'GUESS',
                   createElement('span', { className: "ml-3", style: { color: '#00FFFF' } }, 'THE WORD!')
                 ),
+                // HNA 7YDNA L-JUMLA
                 createElement('h2', { className: "text-xl md:text-2xl text-cyan-300 mb-8" },
-                  `Connect your wallet & pay ${GAME_FEE_ETH} ETH to play ${ROUND_LIMIT} rounds`
+                  `` // Khllinaha khawia
                 ),
                 createElement('div', { className: "flex flex-col gap-4 w-full" },
                   createElement('button', {
@@ -381,7 +364,7 @@
                 ),
                 statusMessage && !isProcessing && createElement('div', {
                   className: `mt-6 p-4 rounded-lg font-bold ${
-                    statusMessage.includes('Error') || statusMessage.includes('failed') || statusMessage.includes('⚠️')
+                    statusMessage.includes('Error') || statusMessage.includes('failed') || statusMessage.includes('⚠️') || statusMessage.includes('❌')
                       ? 'bg-red-500/80' 
                       : statusMessage.includes('✅')
                       ? 'bg-green-500/80'
@@ -397,7 +380,9 @@
             );
           }
 
-          if (gameState === 'gameover') {
+          // ... (L-code dyal 'gameover' w 'playing' kima kan) ...
+          
+           if (gameState === 'gameover') {
             return createElement('div', { className: "min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white" },
               createElement('div', { className: "text-center bg-blue-700 p-8 md:p-10 rounded-2xl border-4 border-cyan-400 shadow-2xl max-w-lg" },
                 createElement(Trophy, { className: "w-16 h-16 mx-auto mb-4 text-yellow-400" }),
@@ -498,7 +483,7 @@
           );
         }
 
-        // Hna kangolo l React ykhdm l-app
+        // ========= 6. Render l-App =========
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(createElement(App));
 
