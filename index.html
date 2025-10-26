@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scrambled Word Quiz</title>
-    
-    <!-- 1. Hada dyal Tailwind (Design) - Kan khliwh -->
+
+    <!-- 1. Tailwind (Design) -->
     <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- 2. Hada dyal Farcaster Embed (Kan khliwh) -->
+    <!-- 2. Farcaster Embed Metadata (kima bghiti) -->
     <meta name="fc:miniapp" content='{
       "version":"next",
       "imageUrl":"https://<YOUR_VERCEL_APP_URL>/embed-image.png",
@@ -17,77 +17,74 @@
           "action":{
           "type":"launch_miniapp",
           "name":"Scrambled Word Quiz",
-          "url":"https://<YOUR_VERCEL_APP_URL>"
+          "url":"https://scrambled-word-game1.vercel.app/"
           }
       }
     }' />
-    
-    <!-- 3. Hada dyal l-Font (Kan khliwh) -->
+
+    <!-- 3. React (kima drti) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+    <!-- 4. L-SDKs L-JDAD (Hado mohimmin) -->
+    <!-- SDK dyal Farcaster -->
+    <script src="https://farcaster.dev/v/v1.js"></script>
+    <!-- SDK dyal Viem (Flos) -->
+    <script src="https://unpkg.com/viem/dist/umd/viem.js"></script>
+    <!-- Viem Chains (Bach nkhdmo f "Base") -->
+    <script src="https://unpkg.com/@viem/chains/dist/umd/index.js"></script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
         body {
             font-family: 'Inter', sans-serif;
         }
     </style>
-    
-    <!-- (Saf, 7ydna kolchi l-scripts l-qdima dyal React, Babel, w SDKs) -->
 </head>
 <body class="bg-blue-900">
-    <!-- Hna fin ghadi yban l-game -->
     <div id="root"></div>
 
-    <!-- Hna kangolo l React ykhdm l-game dyalna -->
-    <!-- Hada howa l-file l-jdid w l-mohim -->
-    <script type="module">
-        // ========= 1. L-IMPORTS L-JDAD (b7al l-example dyal XO) =========
+    <script>
+      // HANI ZDT HAD L-LINE
+      window.onload = function() {
         
-        // Hada l-import l-jdid dyal Farcaster SDK
-        import { sdk } from 'https://esm.sh/@farcaster/miniapp-sdk';
+        // ========= 1. Setup dyal React w Viem (mn l-Window) =========
         
-        // Hada l-import l-jdid dyal React (kaykhdm JSX bla Babel)
-        import React, { useState, useEffect } from 'https://esm.sh/react@18?jsx-runtime=automatic';
-        import ReactDOM from 'https://esm.sh/react-dom@18/client';
+        // React (kima drti) - Hani 7ydt l-ikhtisar 'h'
+        const { useState, useEffect, createElement } = React;
         
-        // Hada l-import l-jdid dyal Viem (dyal l-flos)
-        import { createWalletClient, http, parseEther } from 'https://esm.sh/viem';
-        import { base } from 'https://esm.sh/viem/chains';
-        
-        // (Hani 7ydt l-import dyal BaseMiniApp li kan kaydir l-error)
+        // Viem (mn l-window 7it drna l-script f l-head)
+        // HANI SL7T L-GHALAT HNA: Khassha tkon "Viem" b V kbira, w "ViemChains"
+        const { createWalletClient, http, parseEther } = window.Viem;
+        const { base } = window.ViemChains;
 
+        // ========= 2. Components (kima kano) =========
 
-        // ========= 2. L-INITIALIZATION (L-MOCHIL L-KBIR) =========
-        // Hani 3ytna liha f l-wl kima f l-example!
-        console.log("Calling Farcaster sdk.actions.ready() immediately...");
-        sdk.actions.ready();
-        
-        // (Hani 7ydt l-call dyal Base SDK li kan kaydir l-error)
-
-        // ========= 3. L-CODE DYAL L-GAME DYALNA (kima kan) =========
-        
-        // Hada l-icon dyal Trophy (mn b3d ma 7ydna Lucide)
-        const Trophy = ({ className }) => (
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            className={className}
-          >
-            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
-            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
-            <path d="M4 22h16"/>
-            <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
-            <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
-            <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
-          </svg>
-        );
+        const Trophy = ({ className }) => {
+          // Hna bdlt 'h' b 'createElement'
+          return createElement('svg', {
+            xmlns: "http://www.w3.org/2000/svg",
+            width: "24",
+            height: "24",
+            viewBox: "0 0 24 24",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            strokeLinecap: "round",
+            strokeLinejoin: "round",
+            className: className
+          },
+            createElement('path', { d: "M6 9H4.5a2.5 2.5 0 0 1 0-5H6" }),
+            createElement('path', { d: "M18 9h1.5a2.5 2.5 0 0 0 0-5H18" }),
+            createElement('path', { d: "M4 22h16" }),
+            createElement('path', { d: "M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" }),
+            createElement('path', { d: "M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" }),
+            createElement('path', { d: "M18 2H6v7a6 6 0 0 0 12 0V2Z" })
+          );
+        };
 
         const wordBank = [
+          // (L-lista dyal l-klmat kima kant)
           { word: 'ELEPHANT', hint: 'Large animal with a trunk' },
           { word: 'COMPUTER', hint: 'Electronic device for work' },
           { word: 'RAINBOW', hint: 'Colorful arc in the sky' },
@@ -140,10 +137,16 @@
         ];
 
         const ROUND_LIMIT = 5;
+        const GAME_FEE_ETH = '0.0001';
+        
+        // HADA HOWA L-WALLET DYALK (BDLO B L-ADRESSE DYALK)
+        const DEVELOPER_WALLET = '0x0x68c71247712E39925d31d82FdC02dfe0f8e24de7';
 
-        // L-function dyal l-game
+
+        // ========= 3. L-APP L-RA'ISSI (b l-logic l-7qiqi) =========
+
         function App() {
-          const [gameState, setGameState] = useState('home'); // home, playing, gameover
+          const [gameState, setGameState] = useState('home');
           const [currentWord, setCurrentWord] = useState(null);
           const [scrambled, setScrambled] = useState('');
           const [userGuess, setUserGuess] = useState('');
@@ -154,23 +157,61 @@
           const [timer, setTimer] = useState(20);
           const [round, setRound] = useState(0);
           
-          // States dyal l-Wallet (kima kano)
-          const [fid, setFid] = useState(null);
-          const [userAddress, setUserAddress] = useState(null);
+          // States dyal l-Wallet (Hado drna lihom update)
           const [statusMessage, setStatusMessage] = useState('');
           const [isProcessing, setIsProcessing] = useState(false);
-          
-          // HADA HOWA L-WALLET DYALK (BDLO B L-ADRESSE DYALK)
-          const [developerWallet, setDeveloperWallet] = useState('0x...YOUR_WALLET_ADDRESS_HERE...');
+          const [fid, setFid] = useState(null); // Zdt hada
+          const [userAddress, setUserAddress] = useState(null); // Zdt hada
 
           
-          // Function dyal Connect Wallet (kima kant)
+          // ========= 4. L-7L DYAL "Ready not called" =========
+          // Hada l-code l-mohim li kay7l l-mochkil dyal "infinite loading"
+          
+          useEffect(() => {
+            console.log("App mounted. Starting SDK check...");
+            let fcReady = false;
+            
+            const checkInterval = setInterval(() => {
+              // N-check-iw Farcaster SDK
+              if (!fcReady && window.farcaster && window.farcaster.actions) {
+                console.log("Farcaster SDK found. Calling actions.ready().");
+                window.farcaster.actions.ready();
+                fcReady = true;
+                clearInterval(checkInterval); // Saf, wqf l-check
+              }
+            }, 100); // Kol 100ms
+
+            // Ila t3tl bzaf (5s), nw-qfo l-check
+            const timeout = setTimeout(() => {
+              if (!fcReady) {
+                console.warn("SDK check timed out. Farcaster SDK not found.");
+                clearInterval(checkInterval);
+              }
+            }, 5000);
+
+            return () => {
+              clearInterval(checkInterval);
+              clearTimeout(timeout);
+            };
+          }, []); // Ghadi tkhdm mra w7da mli l-app ybd
+          
+
+          // ========= 5. L-FUNCTIONS L-7QIQIA DYAL L-WALLET =========
+
+          // Hada l-code l-7qiqi dyal Connect Wallet
           const handleConnectWallet = async () => {
             setIsProcessing(true);
             setStatusMessage('1/2: Connecting to Farcaster...');
+            
+            if (!window.farcaster || !window.farcaster.wallet) {
+                setStatusMessage('❌ Farcaster SDK not loaded. Please refresh.');
+                setIsProcessing(false);
+                return;
+            }
+
             try {
-              // Nst3mlo SDK l-jdid
-              const { fid, address } = await sdk.wallet.connect(); 
+              // Nst3mlo SDK dyal Farcaster (mn l-window)
+              const { fid, address } = await window.farcaster.wallet.connect(); 
               if (fid) {
                 setFid(fid);
                 setUserAddress(address);
@@ -179,35 +220,41 @@
                 setStatusMessage('❌ Connection failed. Please try again.');
               }
             } catch (e) {
-              console.error(e);
+              console.error('Connection error:', e);
               setStatusMessage(`❌ Error: ${e.message}`);
             }
             setIsProcessing(false);
           };
 
-          // Function dyal Payment (kima kant)
+          // Hada l-code l-7qiqi dyal Payment
           const handleStartGame = async () => {
             if (!userAddress) {
               setStatusMessage('Please connect your wallet first.');
               return;
             }
             
+            if (DEVELOPER_WALLET === '0x...YOUR_WALLET_ADDRESS_HERE...' || DEVELOPER_WALLET === '0xYourWalletAddressHere') {
+                setStatusMessage('⚠️ Developer: Please set your wallet address in the code!');
+                setIsProcessing(false);
+                return;
+            }
+            
             setIsProcessing(true);
             setStatusMessage('1/3: Preparing transaction...');
 
             try {
-              // Nst3mlo l-SDK l-jdid dyal Viem
+              // Nst3mlo Viem (mn l-window)
               const client = createWalletClient({
                   account: userAddress,
                   chain: base, 
                   transport: http() 
               });
               
-              setStatusMessage('2/3: Please approve the 0.0001 ETH payment in your wallet...');
+              setStatusMessage('2/3: Please approve the payment in your wallet...');
               
               const hash = await client.sendTransaction({
-                  to: developerWallet,
-                  value: parseEther('0.0001')
+                  to: DEVELOPER_WALLET,
+                  value: parseEther(GAME_FEE_ETH)
               });
               
               setStatusMessage('✅ Payment complete! Starting game...');
@@ -219,75 +266,65 @@
               }, 1500);
 
             } catch (e) {
-              console.error(e);
+              console.error('Payment error:', e);
               setStatusMessage(`❌ Payment failed: ${e.message.split('.')[0]}.`);
               setIsProcessing(false);
             }
           };
           
-          // Function dyal tkhrbiq l-klma
+          
+          // ========= 6. L-LOGIC DYAL L-GAME (kima kan) =========
+          
           const scrambleWord = (word) => {
             const firstLetter = word[0];
             const remainingLetters = word.slice(1).split('');
-            
             for (let i = remainingLetters.length - 1; i > 0; i--) {
               const j = Math.floor(Math.random() * (i + 1));
               [remainingLetters[i], remainingLetters[j]] = [remainingLetters[j], remainingLetters[i]];
             }
-            
             const scrambledWordResult = firstLetter + remainingLetters.join('');
             return scrambledWordResult === word ? scrambleWord(word) : scrambledWordResult;
           };
 
-          // Function bach tjib klma jdida
           const loadNewWord = () => {
             const nextRound = round + 1;
-            
             if (nextRound > ROUND_LIMIT) {
               setGameState('gameover');
               return;
             }
-
             let wordsPool = usedWords;
             if (usedWords.length === wordBank.length) {
-              wordsPool = []; 
+              wordsPool = [];
             }
-            
             const availableWords = wordBank.filter(w => !wordsPool.includes(w.word));
             const randomWord = availableWords[Math.floor(Math.random() * availableWords.length)];
-            
             setCurrentWord(randomWord);
             setScrambled(scrambleWord(randomWord.word));
             setUserGuess('');
             setFeedback('');
-            setTimer(20); 
+            setTimer(20);
             setUsedWords([...wordsPool, randomWord.word]);
-            setRound(nextRound); 
+            setRound(nextRound);
           };
 
-          // Nkhdmoha mli l-game ybdah f l-wl
           useEffect(() => {
             if (gameState === 'playing' && round === 0) {
               loadNewWord();
             }
           }, [gameState]);
 
-          // Timer logic
           useEffect(() => {
             if (gameState !== 'playing' || timer <= 0) {
               return;
             }
-
             const interval = setInterval(() => {
               setTimer(t => t - 1);
             }, 1000);
-
             return () => clearInterval(interval);
           }, [gameState, timer]);
 
-          // Check ila sala l-waqt
           useEffect(() => {
-            if (timer === 0 && gameState === 'playing') {
+            if (timer === 0 && gameState === 'playing' && currentWord) {
               setFeedback(`Time's up! The word was: ${currentWord.word}`);
               setAttempts(attempts + 1);
               setTimeout(() => {
@@ -296,12 +333,10 @@
             }
           }, [timer, gameState]);
 
-          // Function dyal "Submit"
           const handleSubmit = () => {
-            if (timer === 0) return; 
-
+            if (timer === 0 || !currentWord) return;
             if (userGuess.toUpperCase() === currentWord.word) {
-              setScore(score + 100); 
+              setScore(score + 100);
               setFeedback('🎉 Correct! Well done!');
               setTimeout(() => {
                 loadNewWord();
@@ -312,10 +347,8 @@
             setAttempts(attempts + 1);
           };
 
-          // Function dyal "Skip"
           const handleSkip = () => {
-            if (timer === 0) return;
-
+            if (timer === 0 || !currentWord) return;
             setFeedback(`The word was: ${currentWord.word}`);
             setAttempts(attempts + 1);
             setTimeout(() => {
@@ -323,209 +356,173 @@
             }, 2000);
           };
 
-          // Function dyal "Enter" mn l-keyboard
           const handleKeyPress = (e) => {
             if (e.key === 'Enter') {
               handleSubmit();
             }
           };
 
-          // Function bach t3awd tl3b
           const handleRestartGame = () => {
             setScore(0);
             setAttempts(0);
             setUsedWords([]);
             setRound(0);
-            setFid(null); // Kanrj3o l Home Page b l-sahh
-            setUserAddress(null);
+            setFid(null); // Zdt hado
+            setUserAddress(null); // Zdt hado
             setGameState('home');
+            setStatusMessage('');
           };
 
-          // Home Page
+          // ========= 7. L-INTERFACE (b `createElement` bdl `h`) =========
+
           if (gameState === 'home') {
-            return (
-              <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white">
-                <div className="text-center w-full max-w-lg">
-                  <h1 className="text-6xl font-black mb-4" style={{
-                    textShadow: '4px 4px 0px rgba(0,0,0,0.3)',
-                    WebkitTextStroke: '3px #FF1493'
-                  }}>
-                    GUESS
-                    <span className="ml-3" style={{color: '#00FFFF'}}>THE WORD!</span>
-                  </h1>
-                  <h2 className="text-2xl text-cyan-300 mb-12">Connect your wallet & pay 0.0001 ETH (Base) to play 5 rounds.</h2>
-                  
-                  {/* Buttons dyal l-Wallet */}
-                  <div className="flex flex-col gap-4 w-full">
-                    <button
-                      onClick={handleConnectWallet}
-                      disabled={isProcessing || fid}
-                      className="bg-purple-600 text-white px-10 py-5 rounded-xl font-black text-2xl border-4 border-white shadow-lg hover:bg-purple-700 transition transform hover:scale-105 disabled:opacity-50"
-                    >
-                      {fid ? `✅ Wallet Connected (FID: ${fid})` : '1. Connect Farcaster Wallet'}
-                    </button>
-
-                    <button
-                      onClick={handleStartGame}
-                      disabled={!fid || isProcessing}
-                      className="bg-pink-500 text-white px-10 py-5 rounded-xl font-black text-2xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105 disabled:opacity-50"
-                    >
-                      {isProcessing ? statusMessage : '2. Start Game (Pay 0.0001 ETH)'}
-                    </button>
-                  </div>
-
-                  {/* Status Message */}
-                  {statusMessage && !isProcessing && (
-                    <div className={`mt-4 p-3 rounded-lg font-bold ${statusMessage.includes('Error') || statusMessage.includes('failed') ? 'bg-red-500/80' : 'bg-green-500/80'}`}>
-                      {statusMessage}
-                    </div>
-                  )}
-                </div>
-              </div>
+            return createElement('div', { className: "min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white" },
+              createElement('div', { className: "text-center w-full max-w-lg" },
+                createElement('h1', { className: "text-5xl md:text-6xl font-black mb-4", style: { textShadow: '4px 4px 0px rgba(0,0,0,0.3)', WebkitTextStroke: '2px #FF1493' } },
+                  'GUESS',
+                  createElement('span', { className: "ml-3", style: { color: '#00FFFF' } }, 'THE WORD!')
+                ),
+                createElement('h2', { className: "text-xl md:text-2xl text-cyan-300 mb-8" },
+                  `Connect your wallet & pay ${GAME_FEE_ETH} ETH to play ${ROUND_LIMIT} rounds`
+                ),
+                createElement('div', { className: "flex flex-col gap-4 w-full" },
+                  createElement('button', {
+                    onClick: handleConnectWallet,
+                    disabled: isProcessing || fid, // Mbdl
+                    className: "bg-purple-600 text-white px-8 py-4 rounded-xl font-black text-xl border-4 border-white shadow-lg hover:bg-purple-700 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  }, fid ? `✅ Connected (FID: ${fid})` : '1. Connect Farcaster Wallet'),
+                  createElement('button', {
+                    onClick: handleStartGame,
+                    disabled: !fid || isProcessing, // Mbdl
+                    className: "bg-pink-500 text-white px-8 py-4 rounded-xl font-black text-xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  }, isProcessing ? statusMessage : `2. Start Game (Pay ${GAME_FEE_ETH} ETH)`)
+                ),
+                statusMessage && !isProcessing && createElement('div', {
+                  className: `mt-6 p-4 rounded-lg font-bold ${
+                    statusMessage.includes('Error') || statusMessage.includes('failed') || statusMessage.includes('⚠️')
+                      ? 'bg-red-500/80' 
+                      : statusMessage.includes('✅')
+                      ? 'bg-green-500/80'
+                      : 'bg-blue-500/80'
+                  }`
+                }, statusMessage),
+                createElement('div', { className: "mt-8 text-sm text-cyan-200 opacity-75" },
+                  createElement('p', null, '🎮 Unscramble words to score points'),
+                  createElement('p', null, '⏱️ 20 seconds per word'),
+                  createElement('p', null, '🏆 100 points per correct answer')
+                )
+              )
             );
           }
 
-          // Game Over Page
           if (gameState === 'gameover') {
-            return (
-              <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white">
-                <div className="text-center bg-blue-700 p-10 rounded-2xl border-4 border-cyan-400 shadow-2xl">
-                  <h1 className="text-5xl font-black mb-4 text-cyan-300">GAME OVER!</h1>
-                  <h2 className="text-3xl mb-8">Your Final Score: <span className="text-pink-400 font-bold">{score}</span></h2>
-                  <button
-                    onClick={handleRestartGame}
-                    className="bg-pink-500 text-white px-12 py-6 rounded-xl font-black text-3xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105"
-                  >
-                    Play Again (Pay Fee)
-                  </button>
-                </div>
-              </div>
+            return createElement('div', { className: "min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4 text-white" },
+              createElement('div', { className: "text-center bg-blue-700 p-8 md:p-10 rounded-2xl border-4 border-cyan-400 shadow-2xl max-w-lg" },
+                createElement(Trophy, { className: "w-16 h-16 mx-auto mb-4 text-yellow-400" }),
+                createElement('h1', { className: "text-4xl md:text-5xl font-black mb-4 text-cyan-300" }, 'GAME OVER!'),
+                createElement('div', { className: "text-2xl md:text-3xl mb-2" }, 'Final Score:'),
+                createElement('div', { className: "text-5xl md:text-6xl font-black text-pink-400 mb-6" }, score),
+                createElement('div', { className: "text-lg mb-8 text-cyan-200" }, `You completed ${ROUND_LIMIT} rounds!`),
+                createElement('button', {
+                  onClick: handleRestartGame,
+                  className: "bg-pink-500 text-white px-10 py-5 rounded-xl font-black text-2xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105"
+                }, 'Play Again (Pay Fee)')
+              )
             );
           }
-          
-          // L-Game (ila ma kantch "home" wla "gameover")
-          if (!currentWord) return <div className="min-h-screen bg-blue-900 flex items-center justify-center text-white text-2xl">Loading...</div>;
 
-          return (
-            <div className="min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4">
-              <div className="w-full max-w-4xl">
-                {/* Header */}
-                <div className="text-center mb-8">
-                  <h1 className="text-6xl font-black mb-2" style={{
-                    textShadow: '4px 4px 0px rgba(0,0,0,0.3)',
-                    color: 'white',
-                    WebkitTextStroke: '3px #FF1493'
-                  }}>
-                    GUESS
-                    <span className="ml-3" style={{color: '#00FFFF'}}>THE WORD!</span>
-                  </h1>
-                </div>
+          if (!currentWord) {
+            return createElement('div', { className: "min-h-screen bg-blue-900 flex items-center justify-center text-white text-2xl" }, 'Loading...');
+          }
 
-                {/* Score Bar */}
-                <div className="flex justify-center gap-4 mb-8 flex-wrap">
-                  <div className="bg-pink-500 px-6 py-3 rounded-lg border-4 border-white shadow-lg">
-                    <div className="text-white font-bold text-sm">SCORE</div>
-                    <div className="text-3xl font-black text-white flex items-center justify-center gap-1">
-                      <Trophy className="w-6 h-6" />
-                      {score}
-                    </div>
-                  </div>
-                  <div className="bg-cyan-400 px-6 py-3 rounded-lg border-4 border-white shadow-lg">
-                    <div className="text-blue-900 font-bold text-sm">ROUND</div>
-                    <div className="text-3xl font-black text-blue-900">{round} / {ROUND_LIMIT}</div>
-                  </div>
-                  <div className={`px-6 py-3 rounded-lg border-4 border-white shadow-lg ${timer <= 5 ? 'bg-red-500' : 'bg-yellow-400'}`}>
-                    <div className={`font-bold text-sm ${timer <= 5 ? 'text-white' : 'text-blue-900'}`}>TIME</div>
-                    <div className={`text-3xl font-black ${timer <= 5 ? 'text-white' : 'text-blue-900'}`}>{timer}s</div>
-                  </div>
-                </div>
-
-                {/* Main Game Area */}
-                <div className="bg-gradient-to-b from-blue-700 to-blue-800 rounded-3xl p-8 border-8 border-cyan-400 shadow-2xl">
-                  {/* Hint */}
-                  <div className="text-center mb-6">
-                    <div className="inline-block bg-pink-500 px-6 py-3 rounded-full border-4 border-white">
-                      <div className="text-white font-bold text-lg">💡 {currentWord.hint}</div>
-                    </div>
-                  </div>
-
-                  {/* Letter Boxes */}
-                  <div className="flex justify-center gap-2 mb-8 flex-wrap">
-                    {scrambled.split('').map((letter, i) => (
-                      <div
-                        key={i}
-                        className="w-14 h-14 md:w-16 md:h-16 bg-white rounded-lg border-4 flex items-center justify-center shadow-lg transform hover:scale-105 transition"
-                        style={{
-                          borderColor: i === 0 ? '#00FF00' : '#FF1493'
-                        }}
-                      >
-                        <span className="text-3xl md:text-4xl font-black" style={{
-                          color: i === 0 ? '#00FF00' : '#003366'
-                        }}>
-                          {letter}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Input */}
-                  <div className="max-w-md mx-auto mb-4">
-                    <input
-                      type="text"
-                      value={userGuess}
-                      onChange={(e) => setUserGuess(e.target.value)}
-                      onKeyPress={handleKeyPress}
-                      placeholder="TYPE YOUR ANSWER..."
-                      className="w-full px-6 py-4 text-2xl font-bold text-center uppercase rounded-xl border-4 border-pink-500 focus:outline-none focus:border-cyan-400 shadow-lg"
-                      style={{backgroundColor: '#FFFFFF', color: '#003366'}}
-                      autoFocus
-                      disabled={timer === 0}
-                    />
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="flex justify-center gap-4">
-                    <button
-                      onClick={handleSubmit}
-                      disabled={timer === 0}
-                      className="bg-pink-500 text-white px-8 py-4 rounded-xl font-black text-xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105 disabled:opacity-50"
-                    >
-                      SUBMIT
-                    </button>
-                    <button
-                      onClick={handleSkip}
-                      disabled={timer === 0}
-                      className="bg-cyan-400 text-blue-900 px-8 py-4 rounded-xl font-black text-xl border-4 border-white shadow-lg hover:bg-cyan-500 transition transform hover:scale-105 disabled:opacity-50"
-                    >
-                      SKIP
-                    </button>
-                  </div>
-
-                  {/* Feedback */}
-                  {feedback && (
-                    <div className={`mt-6 p-4 rounded-xl text-center font-black text-xl border-4 border-white shadow-lg ${
-                      feedback.includes('Correct') 
-                        ? 'bg-green-400 text-white' 
-                        : feedback.includes('Try again')
-                        ? 'bg-red-500 text-white'
-                        : 'bg-yellow-400 text-blue-900'
-                    }`}>
-                      {feedback}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+          return createElement('div', { className: "min-h-screen bg-gradient-to-b from-blue-900 via-blue-800 to-blue-900 flex items-center justify-center p-4" },
+            createElement('div', { className: "w-full max-w-4xl" },
+              createElement('div', { className: "text-center mb-6" },
+                createElement('h1', { className: "text-4xl md:text-6xl font-black mb-2", style: { textShadow: '4px 4px 0px rgba(0,0,0,0.3)', color: 'white', WebkitTextStroke: '2px #FF1493' } },
+                  'GUESS',
+                  createElement('span', { className: "ml-3", style: { color: '#00FFFF' } }, 'THE WORD!')
+                )
+              ),
+              createElement('div', { className: "flex justify-center gap-3 mb-6 flex-wrap" },
+                createElement('div', { className: "bg-pink-500 px-4 py-2 md:px-6 md:py-3 rounded-lg border-4 border-white shadow-lg" },
+                  createElement('div', { className: "text-white font-bold text-xs md:text-sm" }, 'SCORE'),
+                  createElement('div', { className: "text-2xl md:text-3xl font-black text-white flex items-center justify-center gap-1" },
+                    createElement(Trophy, { className: "w-5 h-5 md:w-6 md:h-6" }),
+                    score
+                  )
+                ),
+                createElement('div', { className: "bg-cyan-400 px-4 py-2 md:px-6 md:py-3 rounded-lg border-4 border-white shadow-lg" },
+                  createElement('div', { className: "text-blue-900 font-bold text-xs md:text-sm" }, 'ROUND'),
+                  createElement('div', { className: "text-2xl md:text-3xl font-black text-blue-900" }, `${round} / ${ROUND_LIMIT}`)
+                ),
+                createElement('div', { className: `px-4 py-2 md:px-6 md:py-3 rounded-lg border-4 border-white shadow-lg ${timer <= 5 ? 'bg-red-500' : 'bg-yellow-400'}` },
+                  createElement('div', { className: `font-bold text-xs md:text-sm ${timer <= 5 ? 'text-white' : 'text-blue-900'}` }, 'TIME'),
+                  createElement('div', { className: `text-2xl md:text-3xl font-black ${timer <= 5 ? 'text-white' : 'text-blue-900'}` }, `${timer}s`)
+                )
+              ),
+              createElement('div', { className: "bg-gradient-to-b from-blue-700 to-blue-800 rounded-3xl p-6 md:p-8 border-8 border-cyan-400 shadow-2xl" },
+                createElement('div', { className: "text-center mb-6" },
+                  createElement('div', { className: "inline-block bg-pink-500 px-4 py-2 md:px-6 md:py-3 rounded-full border-4 border-white" },
+                    createElement('div', { className: "text-white font-bold text-base md:text-lg" }, `💡 ${currentWord.hint}`)
+                  )
+                ),
+                createElement('div', { className: "flex justify-center gap-1 md:gap-2 mb-6 flex-wrap" },
+                  ...scrambled.split('').map((letter, i) =>
+                    createElement('div', {
+                      key: i,
+                      className: "w-12 h-12 md:w-16 md:h-16 bg-white rounded-lg border-4 flex items-center justify-center shadow-lg transform hover:scale-105 transition",
+                      style: { borderColor: i === 0 ? '#00FF00' : '#FF1493' }
+                    },
+                      createElement('span', { className: "text-2xl md:text-4xl font-black", style: { color: i === 0 ? '#00FF00' : '#003366' } }, letter)
+                    )
+                  )
+                ),
+                createElement('div', { className: "max-w-md mx-auto mb-4" },
+                  createElement('input', {
+                    type: "text",
+                    value: userGuess,
+                    onChange: (e) => setUserGuess(e.target.value),
+                    onKeyPress: handleKeyPress,
+                    placeholder: "TYPE YOUR ANSWER...",
+                    className: "w-full px-4 py-3 md:px-6 md:py-4 text-xl md:text-2xl font-bold text-center uppercase rounded-xl border-4 border-pink-500 focus:outline-none focus:border-cyan-400 shadow-lg",
+                    style: { backgroundColor: '#FFFFFF', color: '#003366' },
+                    autoFocus: true,
+                    disabled: timer === 0
+                  })
+                ),
+                createElement('div', { className: "flex justify-center gap-3 md:gap-4" },
+                  createElement('button', {
+                    onClick: handleSubmit,
+                    disabled: timer === 0,
+                    className: "bg-pink-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-xl font-black text-lg md:text-xl border-4 border-white shadow-lg hover:bg-pink-600 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  }, 'SUBMIT'),
+                  createElement('button', {
+                    onClick: handleSkip,
+                    disabled: timer === 0,
+                    className: "bg-cyan-400 text-blue-900 px-6 py-3 md:px-8 md:py-4 rounded-xl font-black text-lg md:text-xl border-4 border-white shadow-lg hover:bg-cyan-500 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  }, 'SKIP')
+                ),
+                feedback && createElement('div', {
+                  className: `mt-6 p-4 rounded-xl text-center font-black text-lg md:text-xl border-4 border-white shadow-lg ${
+                    feedback.includes('Correct') 
+                      ? 'bg-green-400 text-white' 
+                      : feedback.includes('Try again')
+                      ? 'bg-red-500 text-white'
+                      : 'bg-yellow-400 text-blue-900'
+                  }`
+                }, feedback)
+              )
+            )
           );
         }
 
-        // ========= 4. Hna kangolo l React ykhdm l-game dyalna =========
+        // Hna kangolo l React ykhdm l-app
         const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(
-            <App /> /* Hna 7ydna StrictMode l-qdima */
-        );
-    </script>
+        root.render(createElement(App));
 
+      // HANI SDDIT L-FUNCTION DYAL window.onload
+      };
+    </script>
 </body>
 </html>
 
