@@ -15,7 +15,7 @@
     "homeUrl": "https://scrambled-word-game1.vercel.app/",
     "iconUrl": "https://main--wordscramblegame1.netlify.app/assets/logo.png",
     "splashImageUrl": "https://scrambled-word-game1.vercel.app/images/splash.png",
-    "splashBackgroundColor": "#FF1493",
+    "splashBackgroundColor": "#ffffff",
     "subtitle": "Scrambled Word Quiz",
     "description": "A fun game to unscramble words against the clock.",
     "screenshotUrls": [
