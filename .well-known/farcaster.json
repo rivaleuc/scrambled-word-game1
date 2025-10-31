@@ -2,7 +2,7 @@
   "accountAssociation": {
     "header": "eyJmaWQiOjk0NDA1NCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDE0MjY4QkY1YTM0MmFjNjNFNjMwZDQzZDhkMzg0MzgwZTIyNzY0NzcifQ",
     "payload": "eyJkb21haW4iOiJzY3JhbWJsZWQtd29yZC1nYW1lMS52ZXJjZWwuYXBwIn0",
-    "signature": "BLTeB4FiOWOZEXeP1dYONvFBf9tWDDED3yVs+ag9ig9IcYRxOc4UhgntSBZ7aIAD/TMIn5UjMbEWPcw6yWn25Bs="
+    "signature": "u6Sh6voIKcvHRDrTzrxCLrdij7WA90LVno51d8U2K7tso6aZKw2AW9kbYpjT95H3UwIMS0bPW4uNgER7ZMtv/Bw="
   },
   "baseBuilder": {
     "allowedAddresses": [
@@ -11,10 +11,10 @@
   },
   "miniapp": {
     "version": "1",
-    "name": "Block and hole",
-    "homeUrl": "https://blockhole-five.vercel.app/",
-    "iconUrl": "",
-    "splashImageUrl": "",
+    "name": "Scrumble words",
+    "homeUrl": "https://scrambled-word-game1-7ua2.vercel.app/",
+    "iconUrl": "https://scrambled-word-game1-7ua2.vercel.app/images/logo.png",
+    "splashImageUrl": "https://scrambled-word-game1-7ua2.vercel.app/images/splash.png",
     "splashBackgroundColor": "#ffffff",
     "subtitle": "Scrambled Word Quiz",
     "description": "A fun game to unscramble words against the clock.",
